@@ -1,10 +1,12 @@
 package main
 
 import (
-	"log/slog"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"os"
+
+	"github.com/VsevolodCher/eventhub/internal/config"
 )
 
 func main() {
@@ -14,10 +16,10 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", healthHandler)
 
-	addr := ":8080"
-	slog.Info("event-service starting", "addr", addr)
+	cfg := config.Load()
+	slog.Info("event-service starting", "addr", cfg.HTTPAddr)
 
-	if err := http.ListenAndServe(addr, mux); err != nil {
+	if err := http.ListenAndServe(cfg.HTTPAddr, mux); err != nil {
 		slog.Error("server stopped", "error", err)
 		os.Exit(1)
 	}
